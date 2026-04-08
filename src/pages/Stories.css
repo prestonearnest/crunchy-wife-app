@@ -1,0 +1,37 @@
+.stories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.story-card {
+  padding: 20px;
+}
+
+.story-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.story-author {
+  font-size: 13px;
+  color: var(--green-medium);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.story-body {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+}
+
+.story-date {
+  display: block;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-light);
+}
