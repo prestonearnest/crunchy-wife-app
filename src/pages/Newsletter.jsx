@@ -40,12 +40,12 @@ export default function Newsletter() {
   return (
     <div className="page">
       <h1 className="page-title">Newsletter</h1>
-      <p className="page-subtitle">Monthly wisdom from The Crunchy Wife herself</p>
+      <p className="page-subtitle">Monthly wisdom from Crunchy Wife Community</p>
 
-      <div className="newsletter-signup card">
+      <div className="newsletter-signup">
         {subscribed ? (
           <div className="signup-success">
-            <span className="success-icon">🎉</span>
+            <div className="success-check"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C8F560" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="9 12 12 15 16 9" /></svg></div>
             <h3>You're in!</h3>
             <p>Watch your inbox for the next issue.</p>
           </div>
@@ -68,7 +68,7 @@ export default function Newsletter() {
                 required
               />
               <button type="submit" className="btn btn-primary btn-full" disabled={submitting}>
-                {submitting ? 'Subscribing...' : 'Subscribe 🌿'}
+                {submitting ? 'Subscribing...' : 'Subscribe'}
               </button>
             </div>
           </form>
@@ -80,7 +80,7 @@ export default function Newsletter() {
           <h2 className="section-title">Past Issues</h2>
           <div className="archive-list">
             {newsletters.map(nl => (
-              <div key={nl.id} className="archive-item card">
+              <div key={nl.id} className="archive-item">
                 <button
                   className="archive-header"
                   onClick={() => setExpanded(expanded === nl.id ? null : nl.id)}
@@ -96,7 +96,7 @@ export default function Newsletter() {
                     </span>
                   </div>
                   <span className={`archive-toggle ${expanded === nl.id ? 'open' : ''}`}>
-                    ▾
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
                   </span>
                 </button>
                 {expanded === nl.id && (

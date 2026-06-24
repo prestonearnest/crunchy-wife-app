@@ -23,21 +23,12 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="page">
-      <div className="home-hero">
-        <h1 className="home-hero-title">Welcome to the Crunchy Side</h1>
-        <p className="home-hero-sub">
-          Come for the laughs. Stay for the health knowledge. 🌿
-        </p>
-      </div>
+    <div className="page home-page">
+      {/* Stories Row */}
+      <InstagramEmbed />
 
-      <section className="home-section">
-        <h2 className="section-title">Latest from Instagram</h2>
-        <InstagramEmbed />
-      </section>
-
-      <section className="home-section">
-        <h2 className="section-title">Fresh Content</h2>
+      {/* Feed */}
+      <section className="home-feed">
         {loading ? (
           <div className="loading-state">
             <div className="loading-spinner" />
@@ -45,7 +36,7 @@ export default function Home() {
           </div>
         ) : content.length === 0 ? (
           <div className="empty-state">
-            <span className="empty-icon">🌱</span>
+            <span className="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#C8F560" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 20h10" /><path d="M12 20v-8" /><path d="M12 12c-3.5 0-6-2.5-6-6 3.5 0 6 2.5 6 6z" /><path d="M12 12c3.5 0 6-2.5 6-6-3.5 0-6 2.5-6 6z" /></svg></span>
             <p>Content is sprouting! Check back soon.</p>
           </div>
         ) : (

@@ -26,9 +26,9 @@ export default function AdminLogin() {
   return (
     <div className="admin-login-page">
       <div className="admin-login-card card">
-        <span className="admin-login-icon">🌿</span>
+        <div className="admin-login-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C8F560" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2C6.5 2 2 6.5 2 12c0 3 1.5 5.5 3.5 7.5C7 21 9.5 22 12 22c5.5 0 10-4.5 10-10" /><path d="M12 2c3 3 4.5 7 4.5 10" /><path d="M12 2v10" /></svg></div>
         <h1>Admin Login</h1>
-        <p>The Crunchy Wife Dashboard</p>
+        <p>Crunchy Wife Community Dashboard</p>
 
         <form onSubmit={handleLogin}>
           <div className="form-fields">

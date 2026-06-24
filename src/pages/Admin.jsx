@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import './Admin.css'
 
-const TABS = ['content', 'products', 'stories', 'newsletters', 'subscribers']
+const TABS = ['content', 'products', 'stories', 'affiliates', 'subscribers']
 
 export default function Admin() {
   const [user, setUser] = useState(null)
@@ -33,7 +33,7 @@ export default function Admin() {
     <div className="admin-page">
       <header className="admin-header">
         <div className="admin-header-inner">
-          <h1>🌿 Crunchy Admin</h1>
+          <h1>Crunchy Wife Community Admin</h1>
           <div className="admin-user">
             <span>{user.email}</span>
             <button onClick={handleLogout} className="btn btn-secondary">Logout</button>
@@ -57,70 +57,81 @@ export default function Admin() {
         {tab === 'content' && <ContentManager />}
         {tab === 'products' && <ProductManager />}
         {tab === 'stories' && <StoryManager />}
-        {tab === 'newsletters' && <NewsletterManager />}
+        {tab === 'affiliates' && <AffiliateManager />}
         {tab === 'subscribers' && <SubscriberList />}
       </div>
     </div>
   )
 }
 
+function slugify(text) {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+}
+
 function ContentManager() {
   const [items, setItems] = useState([])
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ title: '', body: '', type: 'health_tip', media_url: '', thumbnail_url: '', published: true })
+  const [form, setForm] = useState({ title: '', excerpt: '', content: '', tag: 'musings', cover_image_url: '', status: 'draft', is_featured: false })
 
   useEffect(() => { fetchItems() }, [])
 
   async function fetchItems() {
-    const { data } = await supabase.from('content').select('*').order('created_at', { ascending: false })
+    const { data } = await supabase.from('blog_posts').select('*').order('created_at', { ascending: false })
     setItems(data || [])
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
-    await supabase.from('content').insert(form)
-    setForm({ title: '', body: '', type: 'health_tip', media_url: '', thumbnail_url: '', published: true })
+    await supabase.from('blog_posts').insert({ ...form, slug: slugify(form.title) })
+    setForm({ title: '', excerpt: '', content: '', tag: 'musings', cover_image_url: '', status: 'draft', is_featured: false })
     setShowForm(false)
     fetchItems()
   }
 
   async function togglePublish(item) {
-    await supabase.from('content').update({ published: !item.published }).eq('id', item.id)
+    await supabase.from('blog_posts').update({ status: item.status === 'published' ? 'draft' : 'published' }).eq('id', item.id)
     fetchItems()
   }
 
   async function deleteItem(id) {
-    await supabase.from('content').delete().eq('id', id)
+    await supabase.from('blog_posts').delete().eq('id', id)
     fetchItems()
   }
 
   return (
     <div>
       <div className="admin-section-header">
-        <h2>Content</h2>
+        <h2>Blog Posts</h2>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-          {showForm ? 'Cancel' : '+ Add Content'}
+          {showForm ? 'Cancel' : '+ Add Post'}
         </button>
       </div>
 
       {showForm && (
         <form className="admin-form card" onSubmit={handleSubmit}>
-          <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
-            <option value="health_tip">Health Tip</option>
-            <option value="video">Video</option>
-            <option value="article">Article</option>
-            <option value="meme">Meme</option>
-            <option value="funny">Funny</option>
+          <select value={form.tag} onChange={e => setForm({ ...form, tag: e.target.value })}>
+            <option value="persona">Persona</option>
+            <option value="protocol">Protocol</option>
+            <option value="kitchen">Kitchen</option>
+            <option value="musings">Musings</option>
+            <option value="marriage">Marriage</option>
+            <option value="food">Food</option>
           </select>
           <input placeholder="Title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required />
-          <textarea placeholder="Body text" value={form.body} onChange={e => setForm({ ...form, body: e.target.value })} />
-          <input placeholder="Media URL (video link, image link)" value={form.media_url} onChange={e => setForm({ ...form, media_url: e.target.value })} />
-          <input placeholder="Thumbnail URL" value={form.thumbnail_url} onChange={e => setForm({ ...form, thumbnail_url: e.target.value })} />
-          <label className="admin-checkbox">
-            <input type="checkbox" checked={form.published} onChange={e => setForm({ ...form, published: e.target.checked })} />
-            Publish immediately
-          </label>
-          <button type="submit" className="btn btn-primary">Save Content</button>
+          <input placeholder="Excerpt (short summary)" value={form.excerpt} onChange={e => setForm({ ...form, excerpt: e.target.value })} />
+          <textarea placeholder="Content" value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} rows={8} />
+          <input placeholder="Cover image URL" value={form.cover_image_url} onChange={e => setForm({ ...form, cover_image_url: e.target.value })} />
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <label className="admin-checkbox">
+              <input type="checkbox" checked={form.is_featured} onChange={e => setForm({ ...form, is_featured: e.target.checked })} />
+              Featured post
+            </label>
+            <label className="admin-checkbox">
+              <input type="checkbox" checked={form.status === 'published'} onChange={e => setForm({ ...form, status: e.target.checked ? 'published' : 'draft' })} />
+              Publish immediately
+            </label>
+          </div>
+          <button type="submit" className="btn btn-primary">Save Post</button>
         </form>
       )}
 
@@ -128,16 +139,17 @@ function ContentManager() {
         {items.map(item => (
           <div key={item.id} className="admin-item card">
             <div className="admin-item-info">
-              <span className={`badge ${item.published ? 'badge-green' : 'badge-wood'}`}>
-                {item.published ? 'Published' : 'Draft'}
+              <span className={`badge ${item.status === 'published' ? 'badge-green' : 'badge-wood'}`}>
+                {item.status}
               </span>
-              <span className="badge badge-wood">{item.type}</span>
+              <span className="badge badge-wood">{item.tag}</span>
+              {item.is_featured && <span className="badge badge-green">Featured</span>}
               <h3>{item.title}</h3>
-              <p>{item.body?.slice(0, 100)}</p>
+              <p>{item.excerpt || item.content?.slice(0, 100)}</p>
             </div>
             <div className="admin-item-actions">
               <button onClick={() => togglePublish(item)} className="btn btn-secondary">
-                {item.published ? 'Unpublish' : 'Publish'}
+                {item.status === 'published' ? 'Unpublish' : 'Publish'}
               </button>
               <button onClick={() => deleteItem(item.id)} className="btn btn-danger">Delete</button>
             </div>
@@ -151,7 +163,7 @@ function ContentManager() {
 function ProductManager() {
   const [items, setItems] = useState([])
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ name: '', description: '', image_url: '', affiliate_url: '', price_note: '', category: '', featured: false })
+  const [form, setForm] = useState({ name: '', description: '', image_url: '', buy_url: '', price_display: '', price_cents: '', category: '', in_stock: true })
 
   useEffect(() => { fetchItems() }, [])
 
@@ -162,14 +174,14 @@ function ProductManager() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    await supabase.from('products').insert(form)
-    setForm({ name: '', description: '', image_url: '', affiliate_url: '', price_note: '', category: '', featured: false })
+    await supabase.from('products').insert({ ...form, price_cents: form.price_cents ? parseInt(form.price_cents) : 0 })
+    setForm({ name: '', description: '', image_url: '', buy_url: '', price_display: '', price_cents: '', category: '', in_stock: true })
     setShowForm(false)
     fetchItems()
   }
 
   async function toggleActive(item) {
-    await supabase.from('products').update({ active: !item.active }).eq('id', item.id)
+    await supabase.from('products').update({ status: item.status === 'active' ? 'archived' : 'active' }).eq('id', item.id)
     fetchItems()
   }
 
@@ -192,12 +204,13 @@ function ProductManager() {
           <input placeholder="Product name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
           <textarea placeholder="Description" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
           <input placeholder="Image URL" value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} />
-          <input placeholder="Affiliate link" value={form.affiliate_url} onChange={e => setForm({ ...form, affiliate_url: e.target.value })} required />
-          <input placeholder="Price note (e.g. ~$25)" value={form.price_note} onChange={e => setForm({ ...form, price_note: e.target.value })} />
+          <input placeholder="Buy link / URL" value={form.buy_url} onChange={e => setForm({ ...form, buy_url: e.target.value })} />
+          <input placeholder="Price display (e.g. $24.99)" value={form.price_display} onChange={e => setForm({ ...form, price_display: e.target.value })} required />
+          <input placeholder="Price in cents (e.g. 2499)" type="number" value={form.price_cents} onChange={e => setForm({ ...form, price_cents: e.target.value })} />
           <input placeholder="Category (e.g. Kitchen, Wellness)" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} />
           <label className="admin-checkbox">
-            <input type="checkbox" checked={form.featured} onChange={e => setForm({ ...form, featured: e.target.checked })} />
-            Featured product
+            <input type="checkbox" checked={form.in_stock} onChange={e => setForm({ ...form, in_stock: e.target.checked })} />
+            In stock
           </label>
           <button type="submit" className="btn btn-primary">Save Product</button>
         </form>
@@ -207,16 +220,16 @@ function ProductManager() {
         {items.map(item => (
           <div key={item.id} className="admin-item card">
             <div className="admin-item-info">
-              <span className={`badge ${item.active ? 'badge-green' : 'badge-wood'}`}>
-                {item.active ? 'Active' : 'Hidden'}
+              <span className={`badge ${item.status === 'active' ? 'badge-green' : 'badge-wood'}`}>
+                {item.status}
               </span>
-              {item.featured && <span className="badge badge-wood">Featured</span>}
               <h3>{item.name}</h3>
+              <p>{item.price_display}{item.category ? ` · ${item.category}` : ''}</p>
               <p>{item.description?.slice(0, 80)}</p>
             </div>
             <div className="admin-item-actions">
               <button onClick={() => toggleActive(item)} className="btn btn-secondary">
-                {item.active ? 'Hide' : 'Show'}
+                {item.status === 'active' ? 'Archive' : 'Activate'}
               </button>
               <button onClick={() => deleteItem(item.id)} className="btn btn-danger">Delete</button>
             </div>
@@ -233,22 +246,23 @@ function StoryManager() {
   useEffect(() => { fetchStories() }, [])
 
   async function fetchStories() {
-    const { data } = await supabase.from('stories').select('*').order('created_at', { ascending: false })
+    const { data } = await supabase.from('community_stories').select('*').order('created_at', { ascending: false })
     setStories(data || [])
   }
 
   async function approve(id) {
-    await supabase.from('stories').update({ approved: true }).eq('id', id)
+    await supabase.from('community_stories').update({ status: 'approved' }).eq('id', id)
     fetchStories()
   }
 
-  async function feature(id, featured) {
-    await supabase.from('stories').update({ featured: !featured }).eq('id', id)
+  async function toggleFeature(story) {
+    const newStatus = story.status === 'featured' ? 'approved' : 'featured'
+    await supabase.from('community_stories').update({ status: newStatus }).eq('id', story.id)
     fetchStories()
   }
 
-  async function deleteStory(id) {
-    await supabase.from('stories').delete().eq('id', id)
+  async function reject(id) {
+    await supabase.from('community_stories').update({ status: 'rejected' }).eq('id', id)
     fetchStories()
   }
 
@@ -262,22 +276,25 @@ function StoryManager() {
         {stories.map(story => (
           <div key={story.id} className="admin-item card">
             <div className="admin-item-info">
-              <span className={`badge ${story.approved ? 'badge-green' : 'badge-wood'}`}>
-                {story.approved ? 'Approved' : 'Pending'}
+              <span className={`badge ${story.status === 'pending' ? 'badge-wood' : story.status === 'rejected' ? 'badge-danger' : 'badge-green'}`}>
+                {story.status}
               </span>
-              {story.featured && <span className="badge badge-green">Featured</span>}
               <h3>{story.title}</h3>
-              <p className="admin-meta">by {story.author_name} {story.email && `(${story.email})`}</p>
-              <p>{story.body}</p>
+              <p className="admin-meta">by {story.author_display || 'Anonymous'}</p>
+              <p>{story.body?.slice(0, 150)}</p>
             </div>
             <div className="admin-item-actions">
-              {!story.approved && (
+              {story.status === 'pending' && (
                 <button onClick={() => approve(story.id)} className="btn btn-primary">Approve</button>
               )}
-              <button onClick={() => feature(story.id, story.featured)} className="btn btn-secondary">
-                {story.featured ? 'Unfeature' : 'Feature'}
-              </button>
-              <button onClick={() => deleteStory(story.id)} className="btn btn-danger">Delete</button>
+              {(story.status === 'approved' || story.status === 'featured') && (
+                <button onClick={() => toggleFeature(story)} className="btn btn-secondary">
+                  {story.status === 'featured' ? 'Unfeature' : 'Feature'}
+                </button>
+              )}
+              {story.status !== 'rejected' && (
+                <button onClick={() => reject(story.id)} className="btn btn-danger">Reject</button>
+              )}
             </div>
           </div>
         ))}
@@ -289,62 +306,54 @@ function StoryManager() {
   )
 }
 
-function NewsletterManager() {
+function AffiliateManager() {
   const [items, setItems] = useState([])
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ title: '', body: '', issue_number: '', published: false })
+  const [form, setForm] = useState({ title: '', blurb: '', image_url: '', outbound_url: '', category: '', label: '', status: 'active' })
 
   useEffect(() => { fetchItems() }, [])
 
   async function fetchItems() {
-    const { data } = await supabase.from('newsletters').select('*').order('created_at', { ascending: false })
+    const { data } = await supabase.from('affiliate_products').select('*').order('sort_order', { ascending: true })
     setItems(data || [])
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
-    await supabase.from('newsletters').insert({
-      ...form,
-      issue_number: form.issue_number ? parseInt(form.issue_number) : null,
-      published_at: form.published ? new Date().toISOString() : null,
-    })
-    setForm({ title: '', body: '', issue_number: '', published: false })
+    await supabase.from('affiliate_products').insert(form)
+    setForm({ title: '', blurb: '', image_url: '', outbound_url: '', category: '', label: '', status: 'active' })
     setShowForm(false)
     fetchItems()
   }
 
-  async function togglePublish(item) {
-    await supabase.from('newsletters').update({
-      published: !item.published,
-      published_at: !item.published ? new Date().toISOString() : item.published_at,
-    }).eq('id', item.id)
+  async function toggleActive(item) {
+    await supabase.from('affiliate_products').update({ status: item.status === 'active' ? 'archived' : 'active' }).eq('id', item.id)
     fetchItems()
   }
 
   async function deleteItem(id) {
-    await supabase.from('newsletters').delete().eq('id', id)
+    await supabase.from('affiliate_products').delete().eq('id', id)
     fetchItems()
   }
 
   return (
     <div>
       <div className="admin-section-header">
-        <h2>Newsletters</h2>
+        <h2>Affiliate Products</h2>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-          {showForm ? 'Cancel' : '+ New Issue'}
+          {showForm ? 'Cancel' : '+ Add Affiliate'}
         </button>
       </div>
 
       {showForm && (
         <form className="admin-form card" onSubmit={handleSubmit}>
-          <input placeholder="Issue number" type="number" value={form.issue_number} onChange={e => setForm({ ...form, issue_number: e.target.value })} />
-          <input placeholder="Newsletter title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required />
-          <textarea placeholder="Newsletter content" value={form.body} onChange={e => setForm({ ...form, body: e.target.value })} required rows={10} />
-          <label className="admin-checkbox">
-            <input type="checkbox" checked={form.published} onChange={e => setForm({ ...form, published: e.target.checked })} />
-            Publish immediately
-          </label>
-          <button type="submit" className="btn btn-primary">Save Newsletter</button>
+          <input placeholder="Product title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required />
+          <textarea placeholder="Short description / blurb" value={form.blurb} onChange={e => setForm({ ...form, blurb: e.target.value })} />
+          <input placeholder="Image URL" value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} />
+          <input placeholder="Affiliate link (outbound URL)" value={form.outbound_url} onChange={e => setForm({ ...form, outbound_url: e.target.value })} required />
+          <input placeholder="Category (e.g. Kitchen, Wellness)" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} />
+          <input placeholder="Label (e.g. Meg's Pick, New)" value={form.label} onChange={e => setForm({ ...form, label: e.target.value })} />
+          <button type="submit" className="btn btn-primary">Save Affiliate Product</button>
         </form>
       )}
 
@@ -352,20 +361,25 @@ function NewsletterManager() {
         {items.map(item => (
           <div key={item.id} className="admin-item card">
             <div className="admin-item-info">
-              <span className={`badge ${item.published ? 'badge-green' : 'badge-wood'}`}>
-                {item.published ? 'Published' : 'Draft'}
+              <span className={`badge ${item.status === 'active' ? 'badge-green' : 'badge-wood'}`}>
+                {item.status}
               </span>
-              <h3>#{item.issue_number} - {item.title}</h3>
-              <p>{item.body?.slice(0, 120)}</p>
+              {item.label && <span className="badge badge-wood">{item.label}</span>}
+              <h3>{item.title}</h3>
+              {item.category && <p>{item.category}</p>}
+              <p>{item.blurb?.slice(0, 80)}</p>
             </div>
             <div className="admin-item-actions">
-              <button onClick={() => togglePublish(item)} className="btn btn-secondary">
-                {item.published ? 'Unpublish' : 'Publish'}
+              <button onClick={() => toggleActive(item)} className="btn btn-secondary">
+                {item.status === 'active' ? 'Archive' : 'Activate'}
               </button>
               <button onClick={() => deleteItem(item.id)} className="btn btn-danger">Delete</button>
             </div>
           </div>
         ))}
+        {items.length === 0 && (
+          <div className="empty-state"><p>No affiliate products yet.</p></div>
+        )}
       </div>
     </div>
   )
@@ -376,7 +390,7 @@ function SubscriberList() {
 
   useEffect(() => {
     async function fetch() {
-      const { data } = await supabase.from('subscribers').select('*').order('created_at', { ascending: false })
+      const { data } = await supabase.from('newsletter_subscribers').select('*').order('subscribed_at', { ascending: false })
       setSubs(data || [])
     }
     fetch()
@@ -391,10 +405,14 @@ function SubscriberList() {
         {subs.map(sub => (
           <div key={sub.id} className="admin-item card">
             <div className="admin-item-info">
+              <span className={`badge ${sub.confirmed ? 'badge-green' : 'badge-wood'}`}>
+                {sub.confirmed ? 'Confirmed' : 'Pending'}
+              </span>
+              {!sub.active && <span className="badge badge-wood">Unsubscribed</span>}
               <h3>{sub.email}</h3>
               {sub.name && <p>{sub.name}</p>}
               <span className="admin-meta">
-                Joined {new Date(sub.created_at).toLocaleDateString()}
+                Joined {new Date(sub.subscribed_at).toLocaleDateString()}
               </span>
             </div>
           </div>

@@ -1,48 +1,61 @@
-.instagram-section {
+.stories-section {
   margin-bottom: 8px;
+  border-bottom: 1px solid var(--gray-100);
+  padding-bottom: 16px;
 }
 
-.instagram-link {
+.stories-row {
   display: flex;
-  align-items: center;
   gap: 14px;
-  padding: 16px 20px;
-  text-decoration: none;
-  color: inherit;
+  overflow-x: auto;
+  padding: 4px 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
 
-.instagram-icon {
-  font-size: 36px;
-  flex-shrink: 0;
+.stories-row::-webkit-scrollbar {
+  display: none;
 }
 
-.instagram-info {
-  flex: 1;
+.story-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.instagram-handle {
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--green-dark);
+.story-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--gray-200);
+  transition: border-color 0.2s, transform 0.2s;
 }
 
-.instagram-cta {
-  font-size: 13px;
-  color: var(--text-secondary);
+.story-avatar:hover {
+  border-color: var(--lime-dark);
+  transform: scale(1.05);
 }
 
-.instagram-arrow {
-  font-size: 20px;
-  color: var(--green-medium);
-  font-weight: 600;
+.story-avatar-ig {
+  background: linear-gradient(135deg, var(--lime-light), var(--lime));
+  border-color: var(--lime-dark);
 }
 
-.instagram-note {
+.story-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--gray-600);
   text-align: center;
-  font-size: 13px;
-  color: var(--text-light);
-  margin-top: 12px;
+  max-width: 64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

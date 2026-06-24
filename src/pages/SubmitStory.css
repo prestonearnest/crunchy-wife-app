@@ -3,32 +3,44 @@
   padding: 60px 20px;
 }
 
-.success-emoji {
-  font-size: 56px;
-  display: block;
-  margin-bottom: 16px;
+.success-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--lime);
+  color: var(--gray-900);
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
 }
 
 .submit-success h2 {
-  font-size: 28px;
+  font-size: 24px;
+  font-weight: 700;
   margin-bottom: 8px;
+  color: var(--gray-900);
 }
 
 .submit-success p {
-  color: var(--text-secondary);
+  color: var(--gray-500);
   margin-bottom: 24px;
   font-size: 15px;
 }
 
 .submit-examples {
   margin-bottom: 24px;
-  background: linear-gradient(135deg, var(--cream-dark), var(--green-pale));
+  padding: 20px;
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
 }
 
 .submit-examples h3 {
   font-size: 15px;
-  font-weight: 600;
-  color: var(--green-dark);
+  font-weight: 700;
+  color: var(--gray-900);
   margin-bottom: 10px;
 }
 
@@ -38,13 +50,22 @@
 }
 
 .submit-examples li {
-  padding: 6px 0;
+  padding: 5px 0;
   font-size: 14px;
-  color: var(--text-secondary);
+  color: var(--gray-600);
+  padding-left: 20px;
+  position: relative;
 }
 
 .submit-examples li::before {
-  content: '🌿 ';
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 13px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--lime);
 }
 
 .submit-form {
@@ -60,7 +81,9 @@
 }
 
 .form-group label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }

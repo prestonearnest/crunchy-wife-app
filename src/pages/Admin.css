@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: var(--cream);
+  background: var(--white);
 }
 
 .admin-login-card {
@@ -15,26 +15,32 @@
 }
 
 .admin-login-icon {
-  font-size: 40px;
-  display: block;
-  margin-bottom: 12px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--lime);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin: 0 auto 16px;
 }
 
 .admin-login-card h1 {
-  font-family: var(--font-display);
   font-size: 24px;
-  color: var(--green-dark);
+  font-weight: 700;
+  color: var(--gray-900);
   margin-bottom: 4px;
 }
 
 .admin-login-card p {
-  color: var(--text-secondary);
+  color: var(--gray-500);
   font-size: 14px;
   margin-bottom: 24px;
 }
 
 .admin-error {
-  color: #d32f2f;
+  color: var(--red);
   font-size: 14px;
   text-align: center;
 }
@@ -45,17 +51,18 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  color: var(--text-secondary);
+  color: var(--gray-500);
 }
 
 .admin-page {
   min-height: 100vh;
-  background: var(--cream);
+  background: var(--gray-50);
 }
 
 .admin-header {
-  background: linear-gradient(135deg, var(--green-dark), var(--green-medium));
+  background: var(--white);
   padding: 16px 24px;
+  border-bottom: 1px solid var(--gray-100);
 }
 
 .admin-header-inner {
@@ -68,14 +75,15 @@
 
 .admin-header h1 {
   font-size: 20px;
-  color: var(--white);
+  font-weight: 700;
+  color: var(--gray-900);
 }
 
 .admin-user {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: rgba(255,255,255,0.8);
+  color: var(--gray-500);
   font-size: 13px;
 }
 
@@ -94,14 +102,18 @@
   font-size: 14px;
   font-weight: 600;
   text-transform: capitalize;
-  color: var(--text-secondary);
-  background: var(--cream-dark);
+  color: var(--gray-500);
+  background: var(--gray-100);
   transition: all 0.2s;
 }
 
 .admin-tab.active {
-  color: var(--green-dark);
+  color: var(--gray-900);
   background: var(--white);
+}
+
+.admin-tab:hover:not(.active) {
+  color: var(--gray-700);
 }
 
 .admin-content {
@@ -111,7 +123,7 @@
   background: var(--white);
   min-height: 60vh;
   border-radius: 0 8px 8px 8px;
-  box-shadow: 0 2px 12px var(--shadow);
+  box-shadow: var(--shadow);
 }
 
 .admin-section-header {
@@ -123,6 +135,8 @@
 
 .admin-section-header h2 {
   font-size: 20px;
+  font-weight: 700;
+  color: var(--gray-900);
 }
 
 .admin-form {
@@ -131,16 +145,24 @@
   gap: 12px;
   margin-bottom: 24px;
   padding: 20px;
-  background: var(--green-pale);
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
 }
 
 .admin-form select {
-  font-family: var(--font-body);
-  border: 1.5px solid var(--border);
+  font-family: var(--font);
+  border: 1.5px solid var(--gray-200);
   border-radius: var(--radius);
-  padding: 12px 16px;
+  padding: 14px 16px;
   font-size: 16px;
   background: var(--white);
+}
+
+.admin-form select:focus {
+  outline: none;
+  border-color: var(--lime-dark);
+  box-shadow: 0 0 0 3px var(--lime-light);
 }
 
 .admin-checkbox {
@@ -149,18 +171,19 @@
   gap: 8px;
   font-size: 14px;
   cursor: pointer;
+  color: var(--gray-700);
 }
 
 .admin-checkbox input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: var(--green-dark);
+  accent-color: var(--lime-dark);
 }
 
 .admin-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .admin-item {
@@ -169,6 +192,9 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 16px;
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
 }
 
 .admin-item-info {
@@ -178,19 +204,20 @@
 
 .admin-item-info h3 {
   font-size: 15px;
-  color: var(--text-primary);
+  font-weight: 600;
+  color: var(--gray-900);
   margin: 8px 0 4px;
 }
 
 .admin-item-info p {
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--gray-500);
   line-height: 1.5;
 }
 
 .admin-meta {
   font-size: 12px;
-  color: var(--text-light);
+  color: var(--gray-400);
 }
 
 .admin-item-actions {
@@ -206,10 +233,10 @@
 }
 
 .btn-danger {
-  background: #fce4e4;
-  color: #d32f2f;
+  background: var(--red-light);
+  color: var(--red);
 }
 
 .btn-danger:hover {
-  background: #f8c8c8;
+  background: #FECACA;
 }
